@@ -1,9 +1,9 @@
 import { Scene, WebGLRenderer } from 'three';
-import { SubsystemInterface } from './SubsystemInterface';
-import { MessageStream } from './MessageStream';
-import { FileSystem } from './FileSystem';
-import { GameClient } from '../../GameClient/GameClient';
-import { GameLogic } from '../../GameLogic/GameLogic';
+import { SubsystemInterface } from './interfaces/SubsystemInterface';
+import { MessageStream } from './interfaces/MessageStream';
+import { FileSystem } from './interfaces/FileSystem';
+import { GameClient } from './interfaces/GameClient';
+import { GameLogic } from './interfaces/GameLogic';
 
 interface GameEngineOptions {
     maxFPS?: number;
@@ -20,24 +20,20 @@ export class GameEngine implements SubsystemInterface {
     private isQuitting: boolean = false;
     private isActive: boolean = false;
     private lastFrameTime: number = 0;
+    private nextFrameTime: number = 0;
     private gameLogic: GameLogic;
     private gameClient: GameClient;
     private messageStream: MessageStream;
     private fileSystem: FileSystem;
-    private renderer: WebGLRenderer;
-    private scene: Scene;
+    private renderer!: WebGLRenderer;
+    private scene!: Scene;
     private animationFrameId: number | null = null;
 
     private constructor() {
-        this.scene = new Scene();
-        this.renderer = new WebGLRenderer({ antialias: true });
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(this.renderer.domElement);
-
-        // Handle window resizing
-        window.addEventListener('resize', () => {
-            this.renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        // Initialize subsystems first
+        this.messageStream = new MessageStream();
+        this.fileSystem = new FileSystem();
+        this.gameLogic = new GameLogic();
     }
 
     static getInstance(): GameEngine {
@@ -49,19 +45,39 @@ export class GameEngine implements SubsystemInterface {
 
     init(options: GameEngineOptions = {}): void {
         try {
-            this.maxFPS = options.maxFPS || 60;
+            // Initialize Three.js components
+            this.scene = new Scene();
+            this.renderer = new WebGLRenderer({ antialias: true });
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
             
-            // Initialize core systems
-            this.messageStream = new MessageStream();
-            this.fileSystem = new FileSystem();
+            // Initialize game client after Three.js setup
             this.gameClient = new GameClient(this.scene, this.renderer);
-            this.gameLogic = new GameLogic();
 
-            // Set initial state
+            // Add canvas to document body
+            if (document.body && !document.body.contains(this.renderer.domElement)) {
+                document.body.appendChild(this.renderer.domElement);
+            }
+
+            // Set up options
+            this.maxFPS = options.maxFPS || 60;
             this.isQuitting = false;
             this.isActive = true;
+            
+            // Initialize timing
+            const now = performance.now();
+            this.lastFrameTime = now;
+            this.nextFrameTime = now + (1000 / this.maxFPS);
 
-            // Handle window focus events
+            // Initialize subsystems
+            this.messageStream.init();
+            this.fileSystem.init();
+            this.gameClient.init();
+            this.gameLogic.init();
+
+            // Handle window events
+            window.addEventListener('resize', () => {
+                this.renderer.setSize(window.innerWidth, window.innerHeight);
+            });
             window.addEventListener('focus', () => this.isActive = true);
             window.addEventListener('blur', () => this.isActive = false);
 
@@ -79,13 +95,15 @@ export class GameEngine implements SubsystemInterface {
 
     update(): void {
         const currentTime = performance.now();
-        const deltaTime = currentTime - this.lastFrameTime;
-
-        // Respect FPS limit
-        if (deltaTime < (1000 / this.maxFPS)) {
+        
+        // More precise FPS limiting
+        if (currentTime < this.nextFrameTime) {
             return;
         }
 
+        const deltaTime = currentTime - this.lastFrameTime;
+
+        // Update subsystems
         this.messageStream.update();
         this.gameClient.update(deltaTime);
         
@@ -96,7 +114,9 @@ export class GameEngine implements SubsystemInterface {
         // Render the scene
         this.renderer.render(this.scene, this.gameClient.getActiveCamera());
 
+        // Update timing
         this.lastFrameTime = currentTime;
+        this.nextFrameTime = currentTime + (1000 / this.maxFPS);
     }
 
     execute(): void {
@@ -104,25 +124,41 @@ export class GameEngine implements SubsystemInterface {
             if (!this.isQuitting) {
                 this.update();
                 this.animationFrameId = requestAnimationFrame(gameLoop);
-            } else {
-                this.cleanup();
             }
         };
 
-        this.lastFrameTime = performance.now();
+        // Reset timing before starting loop
+        const now = performance.now();
+        this.lastFrameTime = now;
+        this.nextFrameTime = now + (1000 / this.maxFPS);
+        
         this.animationFrameId = requestAnimationFrame(gameLoop);
     }
 
-    private cleanup(): void {
+    cleanup(): void {
+        // Cancel animation frame if running
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
         }
-        this.renderer.dispose();
-        document.body.removeChild(this.renderer.domElement);
+        
+        // Remove canvas from document body if it exists
+        if (this.renderer?.domElement?.parentNode) {
+            this.renderer.domElement.parentNode.removeChild(this.renderer.domElement);
+        }
+        
+        // Dispose of Three.js resources
+        if (this.renderer) {
+            this.renderer.dispose();
+        }
     }
 
     setFramesPerSecondLimit(fps: number): void {
         this.maxFPS = fps;
+        // Reset timing when FPS changes
+        const now = performance.now();
+        this.lastFrameTime = now;
+        this.nextFrameTime = now + (1000 / this.maxFPS);
     }
 
     getFramesPerSecondLimit(): number {
@@ -131,10 +167,12 @@ export class GameEngine implements SubsystemInterface {
 
     setQuitting(quitting: boolean): void {
         this.isQuitting = quitting;
+        if (quitting) {
+            this.cleanup();
+        }
     }
 
     isMultiplayerSession(): boolean {
-        // To be implemented with network system
         return false;
     }
 

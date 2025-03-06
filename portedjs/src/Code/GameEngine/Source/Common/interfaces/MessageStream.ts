@@ -1,3 +1,5 @@
+import { SubsystemInterface } from './SubsystemInterface';
+
 export enum GameMessageType {
     MSG_NEW_GAME,
     MSG_END_GAME,

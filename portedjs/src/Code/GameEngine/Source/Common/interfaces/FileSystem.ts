@@ -1,3 +1,5 @@
+import { SubsystemInterface } from './SubsystemInterface';
+
 export interface FileInfo {
     timestampHigh: number;
     timestampLow: number;
