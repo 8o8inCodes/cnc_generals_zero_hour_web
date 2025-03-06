@@ -21,3 +21,19 @@ export enum DamageType {
 export const DAMAGE_NUM_TYPES = 17;
 
 export const DAMAGE_UNRESISTABLE = DamageType.DAMAGE_UNRESISTABLE;
+
+import { GameObject } from "./GameObject";
+
+export interface DamageInfo {
+    amount: number;
+    radius: number;
+    source: GameObject | null;
+}
+
+export class DieMuxData {
+    public isDieApplicable(obj: GameObject, damageInfo: DamageInfo): boolean {
+        // Logic for determining if death should be handled
+        // This is a stub - actual implementation would check damage types, resistances, etc.
+        return true;
+    }
+}
