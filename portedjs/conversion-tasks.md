@@ -3,7 +3,7 @@
 ## Core Engine
 - [x] Code/GameEngine/Source/Common/GameEngine.cpp -> GameEngine.ts
 - [x] Code/GameEngine/Source/Common/GameMain.cpp -> GameMain.ts 
-- [ ] Code/GameEngine/Include/Common/SubsystemInterface.h -> interfaces/SubsystemInterface.ts
+- [x] Code/GameEngine/Include/Common/SubsystemInterface.h -> interfaces/SubsystemInterface.ts
 - [ ] Code/GameEngine/Include/Common/GameCommon.h -> Common/GameCommon.ts
 
 ## Game Logic
