@@ -17,7 +17,7 @@ Get context from conversion-tasks.md "For AI Agent" and do what it says.
 - [x] Code/GameEngine/Source/GameLogic/AI.cpp -> GameLogic/AI.ts
 - [x] Code/GameEngine/Source/GameLogic/Armor.cpp -> GameLogic/Armor.ts
 - [x] Code/GameEngine/Source/GameLogic/CaveSystem.cpp -> GameLogic/CaveSystem.ts
-- [ ] Code/GameEngine/Source/GameLogic/CrateSystem.cpp -> GameLogic/CrateSystem.ts
+- [x] Code/GameEngine/Source/GameLogic/CrateSystem.cpp -> GameLogic/CrateSystem.ts
 - [ ] Code/GameEngine/Source/GameLogic/Locomotor.cpp -> GameLogic/Locomotor.ts
 - [ ] Code/GameEngine/Source/GameLogic/ObjectCreationList.cpp -> GameLogic/ObjectCreationList.ts
 - [ ] Code/GameEngine/Source/GameLogic/RankInfo.cpp -> GameLogic/RankInfo.ts
