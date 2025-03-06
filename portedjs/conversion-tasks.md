@@ -1,10 +1,16 @@
 # C&C Generals Zero Hour TypeScript Conversion Tasks
+## For AI Agent:
+Pick up the next incomplete task from conversion-tasks.md. Convert it to typescript and make sure to add a unittest and run it in order to make sure that the logic is written correctly. Mock any external dependencies.
+Once conversion is complete and tests are passing, mark the task as complete and end the iteration.
+
+## For humans (copy paste to copilot agent):
+Get context from conversion-tasks.md "For AI Agent" and do what it says.
 
 ## Core Engine
 - [x] Code/GameEngine/Source/Common/GameEngine.cpp -> GameEngine.ts
 - [x] Code/GameEngine/Source/Common/GameMain.cpp -> GameMain.ts 
 - [x] Code/GameEngine/Include/Common/SubsystemInterface.h -> interfaces/SubsystemInterface.ts
-- [ ] Code/GameEngine/Include/Common/GameCommon.h -> Common/GameCommon.ts
+- [x] Code/GameEngine/Include/Common/GameCommon.h -> Common/GameCommon.ts
 
 ## Game Logic
 - [ ] Code/GameEngine/Source/GameLogic/GameLogic.cpp -> GameLogic/GameLogic.ts
