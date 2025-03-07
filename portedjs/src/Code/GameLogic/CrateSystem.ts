@@ -78,9 +78,9 @@ class KindOfMaskType {
 /**
  * Base class for objects that can be overridden
  */
-class Overridable {
-  private isOverride: boolean = false;
-  private nextOverride: Overridable | null = null;
+export class Overridable {
+  protected isOverride: boolean = false;
+  protected nextOverride: Overridable | null = null;
 
   constructor() {
     this.isOverride = false;
