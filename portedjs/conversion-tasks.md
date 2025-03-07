@@ -27,7 +27,7 @@ Get context from conversion-tasks.md "For AI Agent" and do what it says.
 - [x] Code/GameEngine/Source/GameLogic/Weapon.cpp -> GameLogic/Weapon.ts
 
 ## Game Client
-- [ ] Code/GameEngine/Source/GameClient/Display.cpp -> GameClient/Display.ts
+- [x] Code/GameEngine/Source/GameClient/Display.cpp -> GameClient/Display.ts
 - [ ] Code/GameEngine/Source/GameClient/Drawable.cpp -> GameClient/Drawable.ts
 - [ ] Code/GameEngine/Source/GameClient/FXList.cpp -> GameClient/FXList.ts
 - [ ] Code/GameEngine/Source/GameClient/GameClient.cpp -> GameClient/GameClient.ts
